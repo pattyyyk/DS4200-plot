@@ -2,7 +2,7 @@
 const iris = d3.csv("iris.csv");
 
 // Once the data is loaded, proceed with plotting
-penguins.then(function(data) {
+iris.then(function(data) {
     // Convert string values to numbers
     data.forEach(function(d) {
         d.PetalLength = +d.PetalLength;
@@ -90,7 +90,7 @@ penguins.then(function(data) {
 
 });
 
-penguins.then(function(data) {
+iris.then(function(data) {
     // Convert string values to numbers
     data.forEach(function(d) {
         d.PetalLength = +d.PetalLength;
@@ -138,8 +138,14 @@ penguins.then(function(data) {
     const rollupFunction = function(groupData) {
         const values = groupData.map(d => d.PetalLength).sort(d3.ascending);
         const q1 = d3.quantile(values, 0.25);
-        return { q1};
+        const median = d3.quantile(values, 0.5);
+        const q3 = d3.quantile(values, 0.75);
+        const iqr = q3 - q1;
+        const min = q1 - 1.5 * iqr;
+        const max = q3 + 1.5 * iqr;
+        return { q1, median, q3, min, max };
     };
+        
 
     const quartilesBySpecies = d3.rollup(data, rollupFunction, d => d.Species);
 
